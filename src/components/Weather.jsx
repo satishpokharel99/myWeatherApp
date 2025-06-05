@@ -102,16 +102,19 @@ const Weather = () => {
             🗓️ {time.toLocaleTimeString()} || {time.toLocaleDateString()}
           </p>
         </div>
-        <div className="flex justify-around mt-3 gap-15">
+        <div className="flex justify-around mt-3 gap-5">
           <div className="flex flex-col">
-            <p className="text-8xl m-4 font-bold">
+            <p className="text-7xl sm:text-9xl m-4 font-bold">
               {Math.floor(weatherData.temperature)}°C
             </p>
             <p className="text-2xl font-bold">{weatherData.weather}</p>
             <p className="font-light">Humidity {weatherData.humidity}%</p>
             <p className="font-light">Wind Speed {weatherData.windSpeed}km/h</p>
           </div>
-          <img src={weatherData.icon} className=" self-start w-30" />
+          <img
+            src={weatherData.icon}
+            className=" w-20 self-start sm:w-50 sm:self-start"
+          />
         </div>
       </div>
     </div>
