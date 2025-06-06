@@ -11,7 +11,6 @@ import { useRef } from "react";
 const Weather = () => {
   const [weatherData, setWeatherData] = useState(false);
   const [enteredText, setEnteredText] = useState("");
-  const [time, setTime] = useState(new Date());
 
   const refSearch = useRef();
   const iconData = {
@@ -41,17 +40,22 @@ const Weather = () => {
       }`;
       const response = await fetch(url);
       const data = await response.json();
-      //   console.log(data);
+      // console.log(data);
       //   console.log(data.cod);
       if (data.cod == "404") {
         alert("Please enter a correct city name");
         setEnteredText("");
       }
       const icon = iconData[data.weather[0].icon];
+      //getting time of the city we're fetching
+      const cityTime = new Date((data.dt + data.timezone) * 1000);
+
       setWeatherData({
         location: data.name,
         temperature: data.main.temp,
         weather: data.weather[0].main,
+        dateTime: cityTime,
+        // timezone: data.timezone,
         icon: icon,
         humidity: data.main.humidity,
         windSpeed: data.wind.speed,
@@ -65,13 +69,16 @@ const Weather = () => {
     setEnteredText("");
   };
 
+  // console.log(weatherData.dateTime);
+
   useEffect(() => {
     search("Biratnagar");
-    setInterval(() => setTime(new Date()), 1000);
   }, []);
 
+  //formatting time
+
   return (
-    // <div className="flex">
+    // < className="flex">
     <div className="flex flex-col gap-3 p-3 ">
       {/* search box  */}
       <div className="flex bg-gradient-to-br from-sky-600 to-purple-600 p-4 rounded-lg gap-3 shadow-sm shadow-black">
@@ -91,34 +98,42 @@ const Weather = () => {
       </div>
 
       {/* display box  */}
-      <div className="bg-gradient-to-br from-sky-600 to-purple-600 flex flex-col p-6 rounded-lg shadow-sm shadow-black  ">
-        <p className="self-center mt-5 text-5xl font-bold">
-          {weatherData.location}
-        </p>
-        {/* for location and time */}
-        <div className="flex flex-col mt-6">
-          <p>🗺️ {weatherData.location}</p>
-          <p>
-            🗓️ {time.toLocaleTimeString()} || {time.toLocaleDateString()}
+
+      {weatherData ? (
+        <div className="bg-gradient-to-br from-sky-600 to-purple-600 flex flex-col p-6 rounded-lg shadow-sm shadow-black  ">
+          <p className="self-center mt-5 text-5xl font-bold">
+            {weatherData.location}
           </p>
-        </div>
-        <div className="flex justify-around mt-3 gap-5">
-          <div className="flex flex-col">
-            <p className="text-7xl sm:text-9xl m-4 font-bold">
-              {Math.floor(weatherData.temperature)}°C
+          {/* for location and time */}
+          <div className="flex flex-col mt-6">
+            <p>🗺️ {weatherData.location}</p>
+            <p>
+              🗓️ {weatherData.dateTime.toLocaleTimeString()} ||{" "}
+              {weatherData.dateTime.toLocaleDateString()}
+              <span className="italic text-red-600"> (Last updated on)</span>
             </p>
-            <p className="text-2xl font-bold">{weatherData.weather}</p>
-            <p className="font-light">Humidity {weatherData.humidity}%</p>
-            <p className="font-light">Wind Speed {weatherData.windSpeed}km/h</p>
           </div>
-          <img
-            src={weatherData.icon}
-            className=" w-20 self-start sm:w-50 sm:self-start"
-          />
+          <div className="flex justify-around mt-3 gap-5">
+            <div className="flex flex-col">
+              <p className="text-7xl sm:text-9xl m-4 font-bold">
+                {Math.floor(weatherData.temperature)}°C
+              </p>
+              <p className="text-2xl font-bold">{weatherData.weather}</p>
+              <p className="font-light">Humidity {weatherData.humidity}%</p>
+              <p className="font-light">
+                Wind Speed {weatherData.windSpeed}km/h
+              </p>
+            </div>
+            <img
+              src={weatherData.icon}
+              className=" w-20 self-start sm:w-50 sm:self-start"
+            />
+          </div>
         </div>
-      </div>
+      ) : (
+        <div></div>
+      )}
     </div>
-    // </div>
   );
 };
 
